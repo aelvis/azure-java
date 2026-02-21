@@ -1,4 +1,4 @@
-package com.functions;
+package com.function;
 
 import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
@@ -15,8 +15,8 @@ public class AuthFunction {
 
     @FunctionName("register")
     public HttpResponseMessage register(
-            @HttpTrigger(name = "req", methods = {HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS)
-            HttpRequestMessage<RegisterRequest> request,
+            @HttpTrigger(name = "req", methods = {
+                    HttpMethod.POST }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<RegisterRequest> request,
             final ExecutionContext context) {
 
         EntityManager em = null;
@@ -31,11 +31,11 @@ public class AuthFunction {
                 return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
                         .header("Content-Type", "application/json")
                         .body("""
-                            {
-                            "status": "failed",
-                            "message": "username y password son obligatorios"
-                            }
-                            """)
+                                {
+                                "status": "failed",
+                                "message": "username y password son obligatorios"
+                                }
+                                """)
                         .build();
             }
 
@@ -44,11 +44,11 @@ public class AuthFunction {
             return request.createResponseBuilder(HttpStatus.OK)
                     .header("Content-Type", "application/json")
                     .body("""
-                        {
-                        "status": "success",
-                        "message": "Usuario registrado correctamente"
-                        }
-                        """)
+                            {
+                            "status": "success",
+                            "message": "Usuario registrado correctamente"
+                            }
+                            """)
                     .build();
 
         } catch (Exception ex) {
@@ -58,11 +58,11 @@ public class AuthFunction {
             return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
                     .header("Content-Type", "application/json")
                     .body("""
-                        {
-                        "status": "failed",
-                        "message": "%s"
-                        }
-                        """.formatted(ex.getMessage()))
+                            {
+                            "status": "failed",
+                            "message": "%s"
+                            }
+                            """.formatted(ex.getMessage()))
                     .build();
 
         } finally {
@@ -72,11 +72,10 @@ public class AuthFunction {
         }
     }
 
-
     @FunctionName("login")
     public HttpResponseMessage login(
-            @HttpTrigger(name = "req", methods = {HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS)
-            HttpRequestMessage<LoginRequest> request,
+            @HttpTrigger(name = "req", methods = {
+                    HttpMethod.POST }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<LoginRequest> request,
             final ExecutionContext context) {
 
         EntityManager em = HibernateConfig.getEntityManagerFactory().createEntityManager();
