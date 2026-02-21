@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "java",
+    "JWT_SECRET": "UnaClaveMuyLargaYSeguraParaJWT1234567890", 
+    "JWT_EXPIRATION_MS": "86400000",
+    "DB_URL": "jdbc:mysql://cogop-admin.mysql.database.azure.com:3306/ejemplo?useSSL=true&requireSSL=true&verifyServerCertificate=false", 
+    "DB_USER": "cogop", 
+    "DB_PASSWORD": "TNbdKQuUXluTSU1U"
+  }
+}

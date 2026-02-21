@@ -11,15 +11,8 @@ import com.microsoft.azure.functions.annotation.HttpTrigger;
 
 import java.util.Optional;
 
-/**
- * Azure Functions with HTTP Trigger.
- */
 public class Function {
-    /**
-     * This function listens at endpoint "/api/HttpExample". Two ways to invoke it using "curl" command in bash:
-     * 1. curl -d "HTTP Body" {your host}/api/HttpExample
-     * 2. curl "{your host}/api/HttpExample?name=HTTP%20Query"
-     */
+
     @FunctionName("HttpExample")
     public HttpResponseMessage run(
             @HttpTrigger(
@@ -30,7 +23,7 @@ public class Function {
             final ExecutionContext context) {
         context.getLogger().info("Java HTTP trigger processed a request.");
 
-        // Parse query parameter
+        
         final String query = request.getQueryParameters().get("name");
         final String name = request.getBody().orElse(query);
 
