@@ -29,7 +29,7 @@ public class ProductoFunction {
             AuthMiddleware.authenticate(request);
 
             RegisterProducto body = request.getBody();
-            if (body == null || body.nombre == null || body.descripcion == null) {
+            if (body == null || body.getNombre() == null || body.getDescripcion() == null) {
                 return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
                         .body(JsonResponse.error("nombre y descripcion son obligatorios"))
                         .build();
@@ -37,7 +37,7 @@ public class ProductoFunction {
 
             try (DbContext db = new DbContext()) {
                 ProductoService service = new ProductoService(db.em());
-                service.register(body.nombre, body.descripcion);
+                service.register(body.getNombre(), body.getDescripcion());
             }
 
             return request.createResponseBuilder(HttpStatus.OK)
@@ -56,7 +56,6 @@ public class ProductoFunction {
             @HttpTrigger(name = "req", methods = {
                     HttpMethod.GET }, authLevel = AuthorizationLevel.ANONYMOUS, route = "producto/listar") HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
-
         try {
             AuthMiddleware.authenticate(request);
 

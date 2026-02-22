@@ -1,9 +1,13 @@
 package com.domain.dto;
 
 public class JwtResponse {
-    public String token;
+    private String token;
 
     public JwtResponse(String token) {
         this.token = token;
+    }
+
+    public String getToken() {
+        return token;
     }
 }

@@ -8,69 +8,36 @@ import com.microsoft.azure.functions.HttpStatus;
 import com.microsoft.azure.functions.annotation.AuthorizationLevel;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
-import com.security.JwtFilter;
+import com.security.AuthMiddleware;
+import com.utils.JsonResponse;
+import com.security.exception.AuthenticationException;
+import java.util.Map;
 import java.util.Optional;
 
 public class UserInfoFunction {
 
     @FunctionName("me")
     public HttpResponseMessage me(
-            @HttpTrigger(name = "req", methods = {HttpMethod.GET}, authLevel = AuthorizationLevel.ANONYMOUS)
-            HttpRequestMessage<Optional<String>> request,
+            @HttpTrigger(name = "req", methods = {
+                    HttpMethod.GET }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
 
         try {
-            String authHeader = request.getHeaders().get("Authorization");
-            if (authHeader == null) {
-                authHeader = request.getHeaders().get("authorization");
-            }
-            if (authHeader == null || authHeader.isEmpty()) {
-                return request.createResponseBuilder(HttpStatus.UNAUTHORIZED)
-                        .header("Content-Type", "application/json")
-                        .body("""
-                            {
-                              "status": "failed",
-                              "message": "Falta el header Authorization"
-                            }
-                            """)
-                        .build();
-            }
-
-            String username = JwtFilter.validate(authHeader);
-
-            if (username == null) {
-                return request.createResponseBuilder(HttpStatus.UNAUTHORIZED)
-                        .header("Content-Type", "application/json")
-                        .body("""
-                            {
-                              "status": "failed",
-                              "message": "Token inválido o expirado"
-                            }
-                            """)
-                        .build();
-            }
+            String username = AuthMiddleware.authenticate(request);
 
             return request.createResponseBuilder(HttpStatus.OK)
-                    .header("Content-Type", "application/json")
-                    .body("""
-                        {
-                          "status": "success",
-                          "username": "%s"
-                        }
-                        """.formatted(username))
+                    .body(JsonResponse.success(Map.of("username", username)))
                     .build();
 
-        } catch (Exception ex) {
-            context.getLogger().severe("Error en /me: " + ex.getMessage());
+        } catch (AuthenticationException e) {
+            return request.createResponseBuilder(HttpStatus.UNAUTHORIZED)
+                    .body(JsonResponse.error(e.getMessage()))
+                    .build();
 
+        } catch (Exception e) {
+            context.getLogger().severe("Error en /me: " + e.getMessage());
             return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .header("Content-Type", "application/json")
-                    .body("""
-                        {
-                          "status": "failed",
-                          "message": "%s"
-                        }
-                        """.formatted(ex.getMessage()))
+                    .body(JsonResponse.error("Error interno del servidor"))
                     .build();
         }
     }
