@@ -1,6 +1,6 @@
 {
   "scriptFile" : "../azure-java-1.0-SNAPSHOT.jar",
-  "entryPoint" : "com.functions.AuthFunction.login",
+  "entryPoint" : "com.function.AuthFunction.login",
   "bindings" : [ {
     "type" : "httpTrigger",
     "direction" : "in",

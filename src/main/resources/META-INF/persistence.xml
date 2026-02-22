@@ -6,6 +6,7 @@
 
         <class>com.domain.entities.UserEntity</class>
         <class>com.domain.entities.RoleEntity</class>
+        <class>com.domain.entities.Producto</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>

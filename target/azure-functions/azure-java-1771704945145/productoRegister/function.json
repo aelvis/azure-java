@@ -1,11 +1,12 @@
 {
   "scriptFile" : "../azure-java-1.0-SNAPSHOT.jar",
-  "entryPoint" : "com.function.UserInfoFunction.me",
+  "entryPoint" : "com.function.ProductoFunction.register",
   "bindings" : [ {
     "type" : "httpTrigger",
     "direction" : "in",
     "name" : "req",
-    "methods" : [ "GET" ],
+    "route" : "producto/register",
+    "methods" : [ "POST" ],
     "authLevel" : "ANONYMOUS"
   }, {
     "type" : "http",
