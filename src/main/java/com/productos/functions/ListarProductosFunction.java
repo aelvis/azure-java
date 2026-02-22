@@ -7,7 +7,8 @@ import com.microsoft.azure.functions.HttpResponseMessage;
 import com.microsoft.azure.functions.annotation.AuthorizationLevel;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
-import com.productos.application.ProductoService;
+import com.productos.application.ProductoFactory;
+import com.productos.domain.repositories.ProductoRepository;
 import com.shared.infrastructure.BaseFunction;
 import com.shared.utils.DbContext;
 import java.util.Optional;
@@ -26,8 +27,8 @@ public class ListarProductosFunction extends BaseFunction {
             int size = getSize(request);
 
             try (DbContext db = new DbContext()) {
-                ProductoService service = new ProductoService(db.em());
-                return service.listarPaginado(page, size);
+                ProductoRepository service = ProductoFactory.createProductoRepository(db.em());
+                return service.findAllPaginated(page, size);
             }
         }, AuthRequirement.REQUIRED);
     }

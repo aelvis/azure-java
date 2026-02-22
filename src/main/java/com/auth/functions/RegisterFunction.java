@@ -8,6 +8,7 @@ import com.microsoft.azure.functions.annotation.AuthorizationLevel;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 import com.auth.domain.dto.RegisterRequest;
+import com.auth.application.AuthFactory;
 import com.auth.application.UserService;
 import com.shared.infrastructure.BaseFunction;
 import com.shared.utils.DbContext;
@@ -30,7 +31,7 @@ public class RegisterFunction extends BaseFunction {
             }
             
             try (DbContext db = new DbContext()) {
-                UserService service = new UserService(db.em());
+                UserService service = AuthFactory.createUserService(db.em());
                 service.register(body.getUsername(), body.getPassword(), body.getEmail());
                 return "Usuario registrado correctamente";
             }

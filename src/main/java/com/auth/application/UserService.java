@@ -1,24 +1,27 @@
 package com.auth.application;
 
 import com.auth.domain.entities.UserEntity;
+import com.auth.domain.exceptions.UserAlreadyExistsException;
 import com.auth.domain.entities.RoleEntity;
 import com.auth.domain.repositories.UserRepository;
-import com.shared.security.PasswordEncoderProvider;
 import com.auth.domain.repositories.RoleRepository;
-
-import jakarta.persistence.EntityManager;
+import com.shared.security.PasswordEncoderProvider;
 
 public class UserService {
 
     private final UserRepository userRepo;
     private final RoleRepository roleRepo;
 
-    public UserService(EntityManager em) {
-        this.userRepo = new UserRepository(em);
-        this.roleRepo = new RoleRepository(em);
+    public UserService(UserRepository userRepo, RoleRepository roleRepo) {
+        this.userRepo = userRepo;
+        this.roleRepo = roleRepo;
     }
 
     public void register(String username, String password, String email) {
+        if (userRepo.existsByUsername(username)) {
+            throw new UserAlreadyExistsException(username);
+        }
+
         UserEntity user = new UserEntity();
         user.setUsername(username);
         user.setPassword(PasswordEncoderProvider.get().encode(password));
@@ -28,7 +31,6 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("ROLE_USER no existe"));
 
         user.getRoles().add(role);
-
         userRepo.save(user);
     }
 

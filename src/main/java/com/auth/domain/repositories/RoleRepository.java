@@ -1,23 +1,12 @@
 package com.auth.domain.repositories;
 
 import com.auth.domain.entities.RoleEntity;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-
 import java.util.Optional;
+import java.util.List;
 
-public class RoleRepository {
-
-    private final EntityManager em;
-
-    public RoleRepository(EntityManager em) {
-        this.em = em;
-    }
-
-    public Optional<RoleEntity> findByName(String name) {
-        TypedQuery<RoleEntity> q = em.createQuery(
-            "SELECT r FROM RoleEntity r WHERE r.name = :name", RoleEntity.class);
-        q.setParameter("name", name);
-        return q.getResultStream().findFirst();
-    }
+public interface RoleRepository {
+    Optional<RoleEntity> findByName(String name);
+    Optional<RoleEntity> findById(Long id);
+    List<RoleEntity> findAll();
+    void save(RoleEntity role);
 }

@@ -9,6 +9,7 @@ import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 import com.auth.domain.dto.LoginRequest;
 import com.auth.domain.dto.JwtResponse;
+import com.auth.application.AuthFactory;
 import com.auth.application.AuthService;
 import com.shared.infrastructure.BaseFunction;
 import com.shared.utils.DbContext;
@@ -28,7 +29,7 @@ public class LoginFunction extends BaseFunction {
             }
 
             try (DbContext db = new DbContext()) {
-                AuthService service = new AuthService(db.em());
+                 AuthService service = AuthFactory.createAuthService(db.em());
                 String token = service.login(body.getUsername(), body.getPassword());
 
                 if (token == null) {
