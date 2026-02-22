@@ -13,6 +13,7 @@ import com.auth.application.AuthFactory;
 import com.auth.application.AuthService;
 import com.shared.infrastructure.BaseFunction;
 import com.shared.utils.DbContext;
+import com.shared.utils.ValidationUtils;
 
 public class LoginFunction extends BaseFunction {
 
@@ -24,12 +25,10 @@ public class LoginFunction extends BaseFunction {
             final ExecutionContext context) {
 
         return execute(request, context, body -> {
-            if (body == null || body.getUsername() == null || body.getPassword() == null) {
-                throw new IllegalArgumentException("Username y password son requeridos");
-            }
+            ValidationUtils.validate(body);
 
             try (DbContext db = new DbContext()) {
-                 AuthService service = AuthFactory.createAuthService(db.em());
+                AuthService service = AuthFactory.createAuthService(db.em());
                 String token = service.login(body.getUsername(), body.getPassword());
 
                 if (token == null) {

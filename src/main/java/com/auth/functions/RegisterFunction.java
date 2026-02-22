@@ -12,6 +12,7 @@ import com.auth.application.AuthFactory;
 import com.auth.application.UserService;
 import com.shared.infrastructure.BaseFunction;
 import com.shared.utils.DbContext;
+import com.shared.utils.ValidationUtils;
 
 public class RegisterFunction extends BaseFunction {
 
@@ -19,17 +20,12 @@ public class RegisterFunction extends BaseFunction {
 
     @FunctionName("auth_register")
     public HttpResponseMessage register(
-            @HttpTrigger(name = "req", methods = HttpMethod.POST, 
-                        authLevel = AuthorizationLevel.ANONYMOUS,
-                        route = ROUTE) 
-            HttpRequestMessage<RegisterRequest> request,
+            @HttpTrigger(name = "req", methods = HttpMethod.POST, authLevel = AuthorizationLevel.ANONYMOUS, route = ROUTE) HttpRequestMessage<RegisterRequest> request,
             final ExecutionContext context) {
-        
+
         return execute(request, context, body -> {
-            if (body == null || body.getUsername() == null || body.getPassword() == null) {
-                throw new IllegalArgumentException("username y password son obligatorios");
-            }
-            
+            ValidationUtils.validate(body);
+
             try (DbContext db = new DbContext()) {
                 UserService service = AuthFactory.createUserService(db.em());
                 service.register(body.getUsername(), body.getPassword(), body.getEmail());
