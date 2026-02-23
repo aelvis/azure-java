@@ -13,12 +13,13 @@ import com.auth.domain.exceptions.UserNotFoundException;
 import com.auth.domain.dto.JwtResponse;
 import com.auth.application.AuthFactory;
 import com.auth.application.AuthService;
+import com.shared.dto.ResponseEnvelope;
 import com.shared.infrastructure.BaseFunction;
 import com.shared.utils.DbContext;
 import com.shared.utils.ValidationUtils;
 import com.shared.utils.SafeLogger;
 
-public class LoginFunction extends BaseFunction<LoginRequest, JwtResponse> {
+public class LoginFunction extends BaseFunction<LoginRequest, ResponseEnvelope<JwtResponse>> {
 
     private static final String ROUTE = "login";
 
@@ -39,7 +40,7 @@ public class LoginFunction extends BaseFunction<LoginRequest, JwtResponse> {
         log.fine("Login attempt from IP: {}", clientIp);
     }
 
-    private JwtResponse performLogin(LoginRequest body, SafeLogger log) {
+    private ResponseEnvelope<JwtResponse> performLogin(LoginRequest body, SafeLogger log) {
         long startTime = System.currentTimeMillis();
 
         try (DbContext db = new DbContext()) {
@@ -50,8 +51,8 @@ public class LoginFunction extends BaseFunction<LoginRequest, JwtResponse> {
 
             log.info("Login exitoso - Usuario: {}, Tiempo: {}ms",
                     body.getUsername(), duration);
-
-            return new JwtResponse(token);
+            JwtResponse jwtResponse = new JwtResponse(token);
+            return ResponseEnvelope.ok(jwtResponse, "Login exitoso");
 
         } catch (UserNotFoundException e) {
             log.warning("Login fallido - Usuario no encontrado: {}", body.getUsername());

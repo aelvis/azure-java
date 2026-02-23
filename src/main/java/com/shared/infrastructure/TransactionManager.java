@@ -41,7 +41,7 @@ public class TransactionManager {
                     LOGGER.log(Level.SEVERE, "Error haciendo rollback: " + rollbackEx.getMessage());
                 }
             }
-            throw new RuntimeException("Error en operación transaccional: " + e.getMessage(), e);
+            throw e;
         }
     }
 

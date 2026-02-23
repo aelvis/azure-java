@@ -18,9 +18,8 @@ public class ProductoRepositoryImpl implements ProductoRepository {
     @Override
     public Optional<Producto> findByName(String nombre) {
         TypedQuery<Producto> q = em.createQuery(
-            "SELECT p FROM Producto p WHERE p.nombre = :nombre", 
-            Producto.class
-        );
+                "SELECT p FROM Producto p WHERE p.nombre = :nombre",
+                Producto.class);
         q.setParameter("nombre", nombre);
         return q.getResultStream().findFirst();
     }
@@ -30,7 +29,7 @@ public class ProductoRepositoryImpl implements ProductoRepository {
         return Optional.ofNullable(em.find(Producto.class, id));
     }
 
-@Override
+    @Override
     public void save(Producto producto) {
         TransactionManager.doInTransaction(em, () -> {
             if (producto.getId() == null) {
@@ -51,9 +50,8 @@ public class ProductoRepositoryImpl implements ProductoRepository {
     @Override
     public boolean existsByName(String nombre) {
         TypedQuery<Long> q = em.createQuery(
-            "SELECT COUNT(p) FROM Producto p WHERE p.nombre = :nombre", 
-            Long.class
-        );
+                "SELECT COUNT(p) FROM Producto p WHERE p.nombre = :nombre",
+                Long.class);
         q.setParameter("nombre", nombre);
         return q.getSingleResult() > 0;
     }
@@ -62,9 +60,8 @@ public class ProductoRepositoryImpl implements ProductoRepository {
     public List<Producto> findAllPaginated(int page, int size) {
         int offset = page * size;
         TypedQuery<Producto> q = em.createQuery(
-            "SELECT p FROM Producto p ORDER BY p.id", 
-            Producto.class
-        );
+                "SELECT p FROM Producto p ORDER BY p.id",
+                Producto.class);
         q.setFirstResult(offset);
         q.setMaxResults(size);
         return q.getResultList();

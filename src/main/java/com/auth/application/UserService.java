@@ -25,22 +25,24 @@ public class UserService {
         this.em = em;
     }
 
-    public void register(String username, String password, String email) {
-        TransactionManager.doInTransaction(em, () -> {
+    public UserEntity register(String username, String password, String email) {
+        return TransactionManager.doInTransaction(em, () -> {
             if (userRepo.existsByUsername(username)) {
                 throw new UserAlreadyExistsException(username);
             }
+
             UserEntity user = new UserEntity();
             user.setUsername(username);
             user.setPassword(PasswordEncoderProvider.get().encode(password));
             user.setEmail(email);
 
-            RoleEntity role = roleRepo.findByName("ROLE_ADMIN")
+            RoleEntity role = roleRepo.findByName("ROLE_USER")
                     .orElseThrow(() -> new RuntimeException("ROLE_USER no existe"));
 
             user.getRoles().add(role);
             userRepo.save(user);
-            return null;
+
+            return user;
         });
     }
 
