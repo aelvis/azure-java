@@ -1,6 +1,8 @@
 package com.auth.domain.repositories;
 
 import com.auth.domain.entities.UserEntity;
+import com.shared.infrastructure.TransactionManager;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.Optional;
@@ -23,13 +25,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void save(UserEntity user) {
-        em.getTransaction().begin();
-        if (user.getId() == null) {
-            em.persist(user);
-        } else {
-            em.merge(user);
-        }
-        em.getTransaction().commit();
+        TransactionManager.doInTransaction(em, () -> {
+            if (user.getId() == null) {
+                em.persist(user);
+            } else {
+                em.merge(user);
+            }
+        });
     }
 
     @Override
@@ -39,9 +41,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(UserEntity user) {
-        em.getTransaction().begin();
-        em.remove(em.contains(user) ? user : em.merge(user));
-        em.getTransaction().commit();
+        TransactionManager.doInTransaction(em, () -> {
+            em.remove(em.contains(user) ? user : em.merge(user));
+        });
     }
 
     @Override

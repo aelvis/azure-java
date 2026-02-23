@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
+import com.shared.infrastructure.TransactionManager;
 
 public class ProductoRepositoryImpl implements ProductoRepository {
 
@@ -29,22 +30,22 @@ public class ProductoRepositoryImpl implements ProductoRepository {
         return Optional.ofNullable(em.find(Producto.class, id));
     }
 
-    @Override
+@Override
     public void save(Producto producto) {
-        em.getTransaction().begin();
-        if (producto.getId() == null) {
-            em.persist(producto);
-        } else {
-            em.merge(producto);
-        }
-        em.getTransaction().commit();
+        TransactionManager.doInTransaction(em, () -> {
+            if (producto.getId() == null) {
+                em.persist(producto);
+            } else {
+                em.merge(producto);
+            }
+        });
     }
 
     @Override
     public void delete(Producto producto) {
-        em.getTransaction().begin();
-        em.remove(em.contains(producto) ? producto : em.merge(producto));
-        em.getTransaction().commit();
+        TransactionManager.doInTransaction(em, () -> {
+            em.remove(em.contains(producto) ? producto : em.merge(producto));
+        });
     }
 
     @Override
@@ -83,8 +84,8 @@ public class ProductoRepositoryImpl implements ProductoRepository {
 
     @Override
     public void update(Producto producto) {
-        em.getTransaction().begin();
-        em.merge(producto);
-        em.getTransaction().commit();
+        TransactionManager.doInTransaction(em, () -> {
+            em.merge(producto);
+        });
     }
 }

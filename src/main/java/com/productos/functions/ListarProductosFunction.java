@@ -8,12 +8,16 @@ import com.microsoft.azure.functions.annotation.AuthorizationLevel;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 import com.productos.application.ProductoFactory;
+import com.productos.domain.entities.Producto;
 import com.productos.domain.repositories.ProductoRepository;
 import com.shared.infrastructure.BaseFunction;
+import com.shared.security.AuthMiddleware;
 import com.shared.utils.DbContext;
+import com.shared.utils.SafeLogger;
+import java.util.List;
 import java.util.Optional;
 
-public class ListarProductosFunction extends BaseFunction {
+public class ListarProductosFunction extends BaseFunction<Optional<String>, List<Producto>> {
 
     private static final String ROUTE = "producto/listar";
 
@@ -21,8 +25,10 @@ public class ListarProductosFunction extends BaseFunction {
     public HttpResponseMessage listar(
             @HttpTrigger(name = "req", methods = HttpMethod.GET, authLevel = AuthorizationLevel.ANONYMOUS, route = ROUTE) HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
-
+        SafeLogger log = new SafeLogger(context.getLogger());
         return execute(request, context, body -> {
+            String username = AuthMiddleware.authenticate(request, "ROLE_ADMIN", "ROLE_USER");
+            log.info("Usuario admin {} está listando productos", username);
             int page = getPage(request);
             int size = getSize(request);
 

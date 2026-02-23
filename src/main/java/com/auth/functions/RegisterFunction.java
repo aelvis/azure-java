@@ -14,7 +14,7 @@ import com.shared.infrastructure.BaseFunction;
 import com.shared.utils.DbContext;
 import com.shared.utils.ValidationUtils;
 
-public class RegisterFunction extends BaseFunction {
+public class RegisterFunction extends BaseFunction<RegisterRequest, String> {
 
     private static final String ROUTE = "register";
 

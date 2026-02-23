@@ -12,9 +12,11 @@ import com.productos.domain.entities.Producto;
 import com.productos.domain.repositories.ProductoRepository;
 import com.productos.application.ProductoFactory;
 import com.shared.infrastructure.BaseFunction;
+import com.shared.security.AuthMiddleware;
 import com.shared.utils.DbContext;
+import com.shared.utils.SafeLogger;
 
-public class RegistrarProductoFunction extends BaseFunction {
+public class RegistrarProductoFunction extends BaseFunction<RegisterProducto, String> {
 
     private static final String ROUTE = "producto/register";
 
@@ -24,6 +26,9 @@ public class RegistrarProductoFunction extends BaseFunction {
             final ExecutionContext context) {
 
         return execute(request, context, body -> {
+            SafeLogger log = new SafeLogger(context.getLogger());
+            String username = AuthMiddleware.authenticate(request, "ROLE_ADMIN");
+            log.info("Usuario admin {} está registrando productos", username);
             if (body == null || body.getNombre() == null || body.getDescripcion() == null) {
                 throw new IllegalArgumentException("nombre y descripcion son obligatorios");
             }

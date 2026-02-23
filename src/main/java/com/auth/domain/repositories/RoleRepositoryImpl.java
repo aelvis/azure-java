@@ -1,6 +1,8 @@
 package com.auth.domain.repositories;
 
 import com.auth.domain.entities.RoleEntity;
+import com.shared.infrastructure.TransactionManager;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.Optional;
@@ -35,12 +37,12 @@ public class RoleRepositoryImpl implements RoleRepository {
 
     @Override
     public void save(RoleEntity role) {
-        em.getTransaction().begin();
-        if (role.getId() == null) {
-            em.persist(role);
-        } else {
-            em.merge(role);
-        }
-        em.getTransaction().commit();
+        TransactionManager.doInTransaction(em, () -> {
+            if (role.getId() == null) {
+                em.persist(role);
+            } else {
+                em.merge(role);
+            }
+        });
     }
 }

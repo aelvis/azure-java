@@ -20,7 +20,7 @@ public class AuthFactory {
     public static UserService createUserService(EntityManager em) {
         UserRepositoryImpl userRepo = createUserRepository(em);
         RoleRepositoryImpl roleRepo = createRoleRepository(em);
-        return new UserService(userRepo, roleRepo);
+        return new UserService(userRepo, roleRepo, em);
     }
     
     public static AuthService createAuthService(EntityManager em) {
